@@ -13,27 +13,38 @@ class BookController extends Controller
     public function index()
     {
         try {
-            $books = Book::where('user_id', auth()->id())->get();
+            $books = Book::where('user_id', auth()->id())->paginate(10);
             return response()->json(['books' => $books]);
         } catch (\Exception) {
             return response()->json(['error' => 'Server error'], 500);
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
+    
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'isbn' => 'required|string|unique:books',
+            'title' => 'required|string|max:255',
+            'subtitle' => 'string|nullable',
+            'author' => 'string|nullable',
+            'published' => 'datetime|nullable',
+            'publisher' => 'string|nullable',
+            'pages' => 'int|nullable',
+            'description' => 'string|nullable',
+            'website' => 'string|nullable',
+        ]);
+
+        $validatedData['user_id'] = auth()->id();
+        try {
+            $book = Book::create($validatedData);
+            return response()->json(['message' => 'Book created', 'book' => $book]);
+        } catch (\Exception) {
+            return response()->json(['error' => 'Server error'], 500);
+        }
     }
 
     /**
@@ -44,13 +55,6 @@ class BookController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Book $book)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
