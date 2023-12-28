@@ -21,9 +21,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/register', 'App\Http\Controllers\AuthController@register');
 Route::post('/login', 'App\Http\Controllers\AuthController@login');
 
+Route::prefix('user')->group(function () {
+    Route::get('/', 'App\Http\Controllers\AuthController@user');
+    Route::post('/logout', 'App\Http\Controllers\AuthController@logout');
+});
 
-Route::get('/books', 'App\Http\Controllers\BookController@index');
-Route::post('/books', 'App\Http\Controllers\BookController@store');
-Route::get('/books/{id}', 'App\Http\Controllers\BookController@show');
-Route::put('/books/{id}', 'App\Http\Controllers\BookController@update');
-Route::delete('/books/{id}', 'App\Http\Controllers\BookController@destroy');
+Route::prefix('books')->group(function () {
+    Route::get('/', 'App\Http\Controllers\BookController@index');
+    Route::post('/', 'App\Http\Controllers\BookController@store');
+    Route::get('/{id}', 'App\Http\Controllers\BookController@show');
+    Route::put('/{id}', 'App\Http\Controllers\BookController@update');
+    Route::delete('/{id}', 'App\Http\Controllers\BookController@destroy');
+});
