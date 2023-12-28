@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\User;
 
@@ -44,5 +45,36 @@ class AuthController extends Controller
         }
 
         return response()->json(['message' => 'User authenticated', 'token' => $accessToken]);
+    }
+
+    public function user(Request $request)
+    {
+        if (!Auth::check()) {
+            return response()->json(['error' => 'User is not authenticated'], 401);
+        }
+
+        try {
+            $user = User::where('id', Auth::id())->first();
+        } catch (\Exception) {
+            return response()->json(['error' => 'Server error'], 500);
+        }
+
+        return response()->json(['user' => $user]);
+    }
+
+    public function logout(Request $request)
+    {
+        if (!Auth::check()) {
+            return response()->json(['error' => 'User is not authenticated'], 401);
+        }
+
+        try {
+            $user = User::where('id', Auth::id())->first();
+            $user->tokens()->delete();
+        } catch (\Exception) {
+            return response()->json(['error' => 'Server error'], 500);
+        }
+
+        return response()->json(['message' => 'Logged out']);
     }
 }
