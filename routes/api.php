@@ -18,4 +18,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::resource('books', 'App\Http\Controllers\BookController');
+Route::post('/register', 'App\Http\Controllers\AuthController@register');
+Route::post('/login', 'App\Http\Controllers\AuthController@login');
+
+
+Route::get('/books', 'App\Http\Controllers\BookController@index');
+Route::post('/books', 'App\Http\Controllers\BookController@store');
+Route::get('/books/{id}', 'App\Http\Controllers\BookController@show');
+Route::put('/books/{id}', 'App\Http\Controllers\BookController@update');
+Route::delete('/books/{id}', 'App\Http\Controllers\BookController@destroy');
