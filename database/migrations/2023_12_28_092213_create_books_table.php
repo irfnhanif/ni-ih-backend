@@ -21,7 +21,7 @@ return new class extends Migration
             $table->dateTime('published')->nullable();
             $table->string('publisher')->nullable();
             $table->integer('pages')->nullable();
-            $table->text('description')->nullable();
+            $table->string('description')->nullable();
             $table->string('website')->nullable();
             $table->timestamps();
         });
