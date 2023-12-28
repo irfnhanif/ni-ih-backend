@@ -12,7 +12,12 @@ class BookController extends Controller
      */
     public function index()
     {
-        //
+        try {
+            $books = Book::where('user_id', auth()->id())->get();
+            return response()->json(['books' => $books]);
+        } catch (\Exception) {
+            return response()->json(['error' => 'Server error'], 500);
+        }
     }
 
     /**
