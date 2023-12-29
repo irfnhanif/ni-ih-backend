@@ -26,20 +26,21 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'isbn' => 'required|string|unique:books',
-            'title' => 'required|string|max:255',
-            'subtitle' => 'string|nullable',
-            'author' => 'string|nullable',
-            'published' => 'datetime|nullable',
-            'publisher' => 'string|nullable',
-            'pages' => 'int|nullable',
-            'description' => 'string|nullable',
-            'website' => 'string|nullable',
-        ]);
-
-        $validatedData['user_id'] = auth()->id();
         try {
+            $validatedData = $request->validate([
+                'isbn' => 'required|string|unique:books',
+                'title' => 'required|string|max:255',
+                'subtitle' => 'string|nullable',
+                'author' => 'string|nullable',
+                'published' => 'date_format:Y-m-d H:i:s|nullable',
+                'publisher' => 'string|nullable',
+                'pages' => 'int|nullable',
+                'description' => 'string|nullable',
+                'website' => 'string|nullable',
+            ]);
+
+            $validatedData['user_id'] = auth()->id();
+
             $book = Book::create($validatedData);
             return response()->json(['message' => 'Book created', 'book' => $book]);
         } catch (\Exception) {
@@ -52,17 +53,21 @@ class BookController extends Controller
      */
     public function show(Request $request)
     {
-        $book = Book::where('id', (int)$request->book_id)->first();
+        try {
+            $book = Book::where('id', (int)$request->book_id)->first();
 
-        if (!$book) {
-            return response()->json(['message' => 'Book not found'], 404);
+            if (!$book) {
+                return response()->json(['message' => 'Book not found'], 404);
+            }
+
+            if ($book->user_id !== auth()->id()) {
+                return response()->json(['message' => 'Forbidden to access book'], 403);
+            }
+
+            return response()->json(['book' => $book]);
+        } catch (\Exception) {
+            return response()->json(['message' => 'Server error'], 500);
         }
-
-        if ($book->user_id !== auth()->id()) {
-            return response()->json(['message' => 'Forbidden to access book'], 403);
-        }
-
-        return response()->json(['book' => $book]);
     }
 
 
@@ -71,29 +76,29 @@ class BookController extends Controller
      */
     public function update(Request $request)
     {
-        $book = Book::where('id', (int)$request->book_id)->first();
-        
-        if (!$book) {
-            return response()->json(['message' => 'Book not found'], 404);
-        }
-
-        if ($book->user_id !== auth()->id()) {
-            return response()->json(['message' => 'Forbidden to access book'], 403);
-        }
-
-        $validatedData = $request->validate([
-            'isbn' => 'required|string|unique:books,isbn,' . $book->id,
-            'title' => 'required|string|max:255',
-            'subtitle' => 'string|nullable',
-            'author' => 'string|nullable',
-            'published' => 'datetime|nullable',
-            'publisher' => 'string|nullable',
-            'pages' => 'int|nullable',
-            'description' => 'string|nullable',
-            'website' => 'string|nullable',
-        ]);
-
         try {
+            $book = Book::where('id', (int)$request->book_id)->first();
+
+            if (!$book) {
+                return response()->json(['message' => 'Book not found'], 404);
+            }
+
+            if ($book->user_id !== auth()->id()) {
+                return response()->json(['message' => 'Forbidden to access book'], 403);
+            }
+
+            $validatedData = $request->validate([
+                'isbn' => 'required|string|unique:books,isbn,' . $book->id,
+                'title' => 'required|string|max:255',
+                'subtitle' => 'string|nullable',
+                'author' => 'string|nullable',
+                'published' => 'date_format:Y-m-d H:i:s|nullable',
+                'publisher' => 'string|nullable',
+                'pages' => 'int|nullable',
+                'description' => 'string|nullable',
+                'website' => 'string|nullable',
+            ]);
+
             $book->update($validatedData);
             return response()->json(['message' => 'Book updated', 'book' => $book]);
         } catch (\Exception) {
@@ -106,19 +111,20 @@ class BookController extends Controller
      */
     public function destroy(Request $request)
     {
-        $book = Book::where('id', (int)$request->book_id)->first();
-        
-        if (!$book) {
-            return response()->json(['message' => 'Book not found'], 404);
-        }
-
-        if ($book->user_id !== auth()->id()) {
-            return response()->json(['message' => 'Forbidden to access book'], 403);
-        }
-
         try {
+            $book = Book::where('id', (int)$request->book_id)->first();
+
+            if (!$book) {
+                return response()->json(['message' => 'Book not found'], 404);
+            }
+
+            if ($book->user_id !== auth()->id()) {
+                return response()->json(['message' => 'Forbidden to access book'], 403);
+            }
+
             $deletedBook = clone $book;
             $book->delete();
+
             return response()->json(['message' =>'Book deleted', 'book' => $deletedBook]);
         } catch (\Exception) {
             return response()->json(['message' => 'Server error'], 500);
