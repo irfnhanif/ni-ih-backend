@@ -25,7 +25,7 @@ Route::middleware('auth:sanctum')->prefix('user')->group(function () {
 Route::middleware('auth:sanctum')->prefix('books')->group(function () {
     Route::get('/', 'App\Http\Controllers\BookController@index');
     Route::post('/add', 'App\Http\Controllers\BookController@store');
-    Route::get('/{id}', 'App\Http\Controllers\BookController@show');
-    Route::put('/{id}', 'App\Http\Controllers\BookController@update');
-    Route::delete('/{id}', 'App\Http\Controllers\BookController@destroy');
+    Route::get('/{book_id}', 'App\Http\Controllers\BookController@show');
+    Route::put('/{book_id}/edit', 'App\Http\Controllers\BookController@update');
+    Route::delete('/{book_id}', 'App\Http\Controllers\BookController@destroy');
 });
