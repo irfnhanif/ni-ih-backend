@@ -18,7 +18,7 @@ Route::post('/register', 'App\Http\Controllers\AuthController@register');
 Route::post('/login', 'App\Http\Controllers\AuthController@login');
 
 Route::middleware('auth:sanctum')->prefix('user')->group(function () {
-    Route::get('/', 'App\Http\Controllers\AuthController@user');
+    Route::get('/', 'App\Http\Controllers\AuthController@user')->middleware('verified');
     Route::post('/logout', 'App\Http\Controllers\AuthController@logout');
 });
 
