@@ -104,8 +104,24 @@ class BookController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Book $book)
+    public function destroy(Request $request)
     {
-        //
+        $book = Book::where('id', (int)$request->book_id)->first();
+        
+        if (!$book) {
+            return response()->json(['message' => 'Book not found'], 404);
+        }
+
+        if ($book->user_id !== auth()->id()) {
+            return response()->json(['message' => 'Forbidden to access book'], 403);
+        }
+
+        try {
+            $deletedBook = clone $book;
+            $book->delete();
+            return response()->json(['message' =>'Book deleted', 'book' => $deletedBook]);
+        } catch (\Exception) {
+            return response()->json(['message' => 'Server error'], 500);
+        }
     }
 }
