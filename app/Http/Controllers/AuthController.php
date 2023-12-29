@@ -9,13 +9,13 @@ class AuthController extends Controller
 {
     public function register(Request $request)
     {
-        try {
-            $validatedData = $request->validate([
-                'name' => 'required|max:100',
-                'email' => 'email|required|unique:users',
-                'password' => 'required|confirmed'
-            ]);
+        $validatedData = $request->validate([
+            'name' => 'required|max:100',
+            'email' => 'email|required|unique:users',
+            'password' => 'required|confirmed'
+        ]);
 
+        try {
             $validatedData['password'] = bcrypt($request->password);
 
             $user = User::create($validatedData);
@@ -28,12 +28,12 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        $request->validate([
+            'email' => 'email|required',
+            'password' => 'required'
+        ]);
+        
         try {
-            $request->validate([
-                'email' => 'email|required',
-                'password' => 'required'
-            ]);
-
             if (!auth()->attempt($request->only('email', 'password'))) {
                 return response()->json(['message' => 'Wrong email or password'], 401);
             }
