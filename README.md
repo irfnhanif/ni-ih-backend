@@ -10,7 +10,7 @@ This project is one part of the pre-screening test held by PT Nusantara Infrastr
     * Register
     * Login
     * Logout
-3. CRUD Book Resource
+2. CRUD Book Resource
 
 This project integrates with one front-end of the following pre-screening test:
 
