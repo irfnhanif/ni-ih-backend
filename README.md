@@ -5,13 +5,13 @@
 > Irfan Hanif Habibi <br>
 > Universitas Brawijaya
 
-This project is one part of the pre-screening test held by PT Nusantara Infrastructure Tbk which contains:
+This project is back-end part of the pre-screening test held by PT Nusantara Infrastructure Tbk (following provided [openAPI](openapi.yaml) specification) which contains:
 1. Authentication
     * Register
     * Login
     * Logout
 2. CRUD Book Resource
 
-This project integrates with one front-end of the following pre-screening test:
+Also, this project integrates with one front-end of the following pre-screening test:
 
 https://github.com/irfnhanif/ni-ih-frontend
